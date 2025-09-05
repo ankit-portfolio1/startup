@@ -20,8 +20,10 @@ export default function Services() {
         setLoading(true);
         // Django backend route
         const res = await api.get(`/services/services/`);
+        console.log("API Response:", res.data);
         // Backend returns paginated response: {count, results: [...]}
         const data = res.data?.results || [];
+        console.log("Services data:", data);
         // Normalize minimal fields used here
         const normalized = data.map((s) => ({
           id: s.id,
@@ -41,10 +43,11 @@ export default function Services() {
     fetchServices();
   }, [language]);
 
-  const filteredServices =
-    activeCategory === "All"
+  const filteredServices = Array.isArray(services)
+    ? activeCategory === "All"
       ? services
-      : services.filter((s) => s.category === activeCategory);
+      : services.filter((s) => s.category === activeCategory)
+    : [];
 
   if (loading) return <div className="p-10 text-center">{t("loading")}</div>;
 
