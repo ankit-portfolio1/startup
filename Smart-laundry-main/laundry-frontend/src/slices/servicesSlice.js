@@ -5,7 +5,7 @@ import api from "../api"; // centralized axios instance
 export const fetchServices = createAsyncThunk(
   "services/fetchServices",
   async () => {
-    const res = await api.get("/services"); // backend endpoint
+    const res = await api.get("/services/services/"); // backend endpoint
     return res.data; // expected format: [{id, nameKey, descKey, icon, category}, ...]
   }
 );
