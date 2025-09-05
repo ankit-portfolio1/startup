@@ -12,14 +12,24 @@ export default function Services() {
   const [loading, setLoading] = useState(true);
   const [activeCategory, setActiveCategory] = useState("All");
 
-  const categories = ["All", "Laundry", "Home Care", "Accessories"];
+  const categories = ["All", "Steam Pressing", "Dry Cleaning", "Wash & Fold", "Ironing"]; // simple labels
 
   useEffect(() => {
     const fetchServices = async () => {
       try {
         setLoading(true);
-        const res = await api.get(`/services?lang=${language}`);
-        setServices(res.data || []);
+        // Django backend route
+        const res = await api.get(`/services/services/`);
+        const data = Array.isArray(res.data) ? res.data : [];
+        // Normalize minimal fields used here
+        const normalized = data.map((s) => ({
+          id: s.id,
+          icon: s.emoji || "🧺",
+          name: s.name,
+          description: s.description,
+          category: s.category?.name || "Steam Pressing",
+        }));
+        setServices(normalized);
       } catch (err) {
         console.error("Error fetching services:", err);
         setServices([]);
@@ -77,10 +87,10 @@ export default function Services() {
             >
               <div className="text-5xl mb-3">{service.icon}</div>
               <h3 className="text-lg font-bold text-gray-900 dark:text-yellow-300 text-center">
-                {t(service.nameKey, service.name)}
+                {service.name}
               </h3>
               <p className="text-sm text-gray-600 dark:text-gray-400 text-center leading-relaxed">
-                {t(service.descKey, service.description)}
+                {service.description}
               </p>
             </Link>
           ))}
