@@ -22,8 +22,10 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async (formData, { rejectWithValue }) => {
     try {
-      const res = await api.post("/auth/login", formData); 
-      return res.data; // { user, token }
+      const res = await api.post("/auth/login/", formData);
+      // Backend returns: { user, tokens: { access, refresh } }
+      const { user, tokens } = res.data || {};
+      return { user, token: tokens?.access, refresh: tokens?.refresh };
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Login failed");
     }
@@ -43,6 +45,7 @@ const authSlice = createSlice({
       state.user = null;
       state.token = null;
       localStorage.removeItem("auth");
+      delete api.defaults.headers.common["Authorization"];
     },
     clearError: (state) => {
       state.error = null;
@@ -64,7 +67,9 @@ const authSlice = createSlice({
         saveAuth(action.payload.user, action.payload.token);
 
         // ✅ Set default Authorization header for all API calls
-        api.defaults.headers.common["Authorization"] = `Bearer ${action.payload.token}`;
+        if (action.payload.token) {
+          api.defaults.headers.common["Authorization"] = `Bearer ${action.payload.token}`;
+        }
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.status = "failed";
