@@ -1,0 +1,14 @@
+{
+  "name": "smart-laundry-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Django REST API backend for Smart Laundry with npm run scripts",
+  "scripts": {
+    "setup": "bash -lc 'python3 -m venv venv && source venv/bin/activate && python -m pip install --upgrade pip setuptools wheel && pip install -r requirements.txt'",
+    "migrate": "bash -lc 'source venv/bin/activate && python manage.py migrate'",
+    "seed": "bash -lc 'source venv/bin/activate && python manage.py populate_services && python manage.py populate_core_data'",
+    "start": "bash ./start_server.sh",
+    "dev": "bash -lc 'source venv/bin/activate && python manage.py runserver 0.0.0.0:8000'",
+    "test": "bash -lc 'source venv/bin/activate && python test_api.py'"
+  }
+}
