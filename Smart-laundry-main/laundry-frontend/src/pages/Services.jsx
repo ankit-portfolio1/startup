@@ -20,7 +20,8 @@ export default function Services() {
         setLoading(true);
         // Django backend route
         const res = await api.get(`/services/services/`);
-        const data = Array.isArray(res.data) ? res.data : [];
+        // Backend returns paginated response: {count, results: [...]}
+        const data = res.data?.results || [];
         // Normalize minimal fields used here
         const normalized = data.map((s) => ({
           id: s.id,
