@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Backend-Frontend Connection Test</title>
+</head>
+<body>
+    <h1>Backend-Frontend Connection Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        async function testConnection() {
+            const results = document.getElementById('results');
+            
+            try {
+                // Test services endpoint
+                const response = await fetch('http://localhost:8000/api/services/services/');
+                const data = await response.json();
+                
+                results.innerHTML = `
+                    <h2>✅ Connection Successful!</h2>
+                    <p>Backend is running and returning data</p>
+                    <p>Found ${data.count} services:</p>
+                    <ul>
+                        ${data.results.map(service => `<li>${service.emoji} ${service.name} - $${service.price}</li>`).join('')}
+                    </ul>
+                `;
+            } catch (error) {
+                results.innerHTML = `
+                    <h2>❌ Connection Failed</h2>
+                    <p>Error: ${error.message}</p>
+                    <p>Make sure both servers are running:</p>
+                    <ul>
+                        <li>Backend: http://localhost:8000</li>
+                        <li>Frontend: http://localhost:5173</li>
+                    </ul>
+                `;
+            }
+        }
+        
+        testConnection();
+    </script>
+</body>
+</html>
